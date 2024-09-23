@@ -1,0 +1,22 @@
+{
+	"name": "webflow-starter-template",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"build": "esbuild src/index.js --bundle --outfile=dist/bundle.js --minify",
+		"watch": "esbuild src/index.js --bundle --outfile=dist/bundle.js --sourcemap --watch"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"esbuild": "^0.23.1"
+	},
+	"dependencies": {
+		"gsap": "^3.12.5",
+		"magic-grid": "^3.4.7",
+		"split-type": "^0.3.4",
+		"swiper": "^11.1.14"
+	}
+}
