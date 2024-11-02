@@ -15,6 +15,7 @@
 	},
 	"dependencies": {
 		"gsap": "^3.12.5",
+		"lenis": "^1.1.14",
 		"magic-grid": "^3.4.7",
 		"split-type": "^0.3.4",
 		"swiper": "^11.1.14"

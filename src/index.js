@@ -1,4 +1,5 @@
 import "./custom-styles.css"; // Custom CSS import
+import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import MagicGrid from "magic-grid";
@@ -7,23 +8,57 @@ import Swiper from "swiper";
 import { Navigation, Pagination } from "swiper/modules";
 // import Swiper and modules styles
 import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
 // Split JS
 import SplitType from "split-type";
 
 // Global vars
 let menuOpen = false;
+let mainLenis;
+let sidebarLenis;
+
+function lenisSmoothScroll() {
+	mainLenis = new Lenis({
+		lerp: 0.1,
+		smooth: true,
+	});
+
+	// GSAP ticker for smooth scrolling
+	gsap.ticker.add((time) => {
+		mainLenis.raf(time * 1000);
+	});
+
+	// Disable lag smoothing in GSAP for immediate response
+	gsap.ticker.lagSmoothing(0);
+}
+
+function lenisSidebarScroll() {
+	const sidebarElement = document.querySelector('[data-lenis-sidebar="wrap"]');
+	if (!sidebarElement) return;
+	const sidebarContent = sidebarElement.querySelector('[data-lenis-sidebar="content"]');
+
+	// Check if the sidebar content is scrollable
+	const isSidebarScrollable = sidebarContent.scrollHeight > sidebarElement.clientHeight;
+	if (!isSidebarScrollable) return;
+
+	// Initialize Lenis for sidebar if it has scrollable content
+	sidebarLenis = new Lenis({
+		wrapper: sidebarElement,
+		content: sidebarContent,
+		lerp: 0.1,
+		smooth: true,
+		overscroll: true,
+	});
+
+	// GSAP ticker for smooth scrolling
+	gsap.ticker.add((time) => {
+		if (sidebarLenis) {
+			sidebarLenis.raf(time * 1000);
+		}
+	});
+}
 
 function refreshScrollTriggers() {
 	window.fsAttributes = window.fsAttributes || [];
-
-	// Helper function to refresh ScrollTrigger after a delay
-	const refreshAfterRender = () => {
-		setTimeout(() => {
-			ScrollTrigger.refresh();
-		}, 300);
-	};
 
 	// CMS Load Callback
 	window.fsAttributes.push([
@@ -31,7 +66,9 @@ function refreshScrollTriggers() {
 		(listInstances) => {
 			const [listInstance] = listInstances;
 			listInstance.on("renderitems", (renderedItems) => {
-				refreshAfterRender();
+				setTimeout(() => {
+					ScrollTrigger.refresh();
+				}, 400);
 			});
 		},
 	]);
@@ -42,7 +79,12 @@ function refreshScrollTriggers() {
 		(listInstances) => {
 			const [listInstance] = listInstances;
 			listInstance.on("renderitems", (renderedItems) => {
-				refreshAfterRender();
+				setTimeout(() => {
+					ScrollTrigger.refresh();
+					if (!sidebarLenis) {
+						lenisSidebarScroll();
+					}
+				}, 400);
 			});
 		},
 	]);
@@ -101,6 +143,7 @@ function headerMenuAnimation() {
 
 	let openTl = gsap.timeline({ paused: true });
 	openTl
+		.set(menuWrap, { display: "block" })
 		.to([menuWrap, menuContentWrap], {
 			y: 0,
 			duration: 1,
@@ -241,7 +284,7 @@ function mobileMenuAccordion() {
 }
 
 function careerCounter() {
-	const careerList = document.querySelector(".career-list-count");
+	const careerList = document.querySelector('[data-career-count="list"]');
 	const careerCounters = document.querySelectorAll(".career-counter-number");
 	if (!careerList) return;
 
@@ -483,15 +526,22 @@ function newsPostUrl(newsPosts = null) {
 }
 
 function sectionPinAnimation() {
-	const pinSection = document.querySelector('[data-pin-section="true"]');
-	if (!pinSection) return;
+	const pinSections = document.querySelectorAll('[data-pin-section="true"]');
+	if (!pinSections.length) return;
 
-	let st = ScrollTrigger.create({
-		trigger: ".section_solutions",
-		pin: pinSection,
-		start: "top bottom",
-		end: "top top",
-		pinSpacing: false,
+	pinSections.forEach((pinSection) => {
+		const nextSection = pinSection.nextSibling;
+		const viewportHeight = window.innerHeight;
+		const pinHeight = pinSection.offsetHeight;
+
+		let st = ScrollTrigger.create({
+			trigger: pinSection,
+			pin: pinSection,
+			start: viewportHeight < pinHeight ? "bottom bottom" : "top top",
+			endTrigger: nextSection,
+			end: "top top",
+			pinSpacing: false,
+		});
 	});
 }
 
@@ -502,6 +552,7 @@ function indexSpotlightSlider() {
 	const swiper = new Swiper(swiperWrap, {
 		loop: false,
 		slidesPerView: 1.2,
+		speed: 500,
 		spaceBetween: 32,
 		breakpoints: {
 			768: {
@@ -544,15 +595,11 @@ function indexVideoReveal() {
 			},
 			"+=0.2"
 		)
-		.fromTo(
-			[".header", ".home-hero_icon", ".home-hero_bottom-content"],
-			{
-				opacity: 0,
-			},
+		.to(
+			[".index-header-fade", ".home-hero_icon", ".home-hero_bottom-content"],
 			{
 				opacity: 1,
 				duration: 1,
-				stagger: 0.1,
 			},
 			"+=0.1"
 		);
@@ -565,7 +612,7 @@ function textRevealAnimation() {
 	animationTargets.forEach((target) => {
 		// Split text into chars for animation
 		const animationText = target.querySelector('[data-text-reveal="text"]');
-		const splitText = new SplitType(animationText);
+		const splitText = new SplitType(animationText, { types: "chars" });
 		const animationChars = splitText.chars;
 
 		// Create and insert text overlay into DOM
@@ -612,48 +659,434 @@ function textRevealAnimation() {
 	});
 }
 
-function relatedPostsSwiper() {
-	const relatedPostsWrap = document.querySelector(".related-posts_wrap");
-	if (!relatedPostsWrap) return;
+function mobileOnlySwiper() {
+	const swiperTargets = document.querySelectorAll('[data-mobile-swiper="target"]');
+	if (swiperTargets.length === 0) return;
 
 	const breakpoint = window.matchMedia("(max-width: 767px)");
+
+	swiperTargets.forEach((swiperTarget) => {
+		const swiperName = swiperTarget.getAttribute("data-swiper-name");
+
+		let swiper = null;
+		const wrapper = swiperTarget.querySelector('[data-mobile-swiper="wrap"]');
+		const slides = swiperTarget.querySelectorAll('[data-mobile-swiper="slide"]');
+
+		// Find navigation and pagination elements relted to the specific swiperTarget
+		const paginationEl = document.querySelector(`[data-swiper-pagination="${swiperName}"]`);
+		const nextBtn = document.querySelector(`[data-swiper-next="${swiperName}"]`);
+		const prevBtn = document.querySelector(`[data-swiper-prev="${swiperName}"]`);
+
+		function addSwiperClasses() {
+			wrapper.classList.add("swiper-wrapper");
+			slides.forEach((slide) => {
+				slide.classList.add("swiper-slide");
+			});
+		}
+
+		function removeSwiperClasses() {
+			wrapper.classList.remove("swiper-wrapper");
+			slides.forEach((slide) => {
+				slide.classList.remove("swiper-slide");
+			});
+		}
+
+		function initSwiper() {
+			addSwiperClasses(); // Add classes before initializing Swiper
+			swiper = new Swiper(swiperTarget, {
+				modules: [Navigation, Pagination],
+				slidesPerView: 1,
+				spaceBetween: 20,
+				speed: 500,
+				pagination: {
+					bulletClass: "swiper-pagination-bullet",
+					bulletActiveClass: "is-active",
+					el: paginationEl,
+				},
+				navigation: {
+					nextEl: nextBtn,
+					prevEl: prevBtn,
+				},
+			});
+		}
+
+		function destroySwiper() {
+			if (swiper) {
+				swiper.destroy(true, true);
+				swiper = null;
+			}
+			removeSwiperClasses(); // Remove classes after destroying Swiper
+		}
+
+		breakpoint.addEventListener("change", (event) => {
+			if (event.matches) {
+				initSwiper();
+			} else {
+				destroySwiper();
+			}
+		});
+
+		// Try to init swiper when page loads if the breakpoint matches
+		if (breakpoint.matches) {
+			initSwiper();
+		} else {
+			destroySwiper();
+		}
+	});
+}
+
+function dataProjectsSwiper() {
+	const swiperTargets = document.querySelectorAll('[data-desktop-swiper="target"]');
+	if (!swiperTargets.length) return;
+
+	const breakpoint = window.matchMedia("(min-width: 768px)");
+
+	swiperTargets.forEach((target) => {
+		let swiper = null;
+
+		const swiperName = target.getAttribute("data-swiper-name");
+		const wrapper = target.querySelector('[data-desktop-swiper="wrap"]');
+		const slides = target.querySelectorAll('[data-desktop-swiper="slide"]');
+		const nextBtn = document.querySelector(`[data-swiper-next="${swiperName}"]`);
+		const prevBtn = document.querySelector(`[data-swiper-prev="${swiperName}"]`);
+
+		function addSwiperClasses() {
+			wrapper.classList.add("swiper-wrapper");
+			slides.forEach((slide) => {
+				slide.classList.add("swiper-slide");
+			});
+		}
+
+		function removeSwiperClasses() {
+			wrapper.classList.remove("swiper-wrapper");
+			slides.forEach((slide) => {
+				slide.classList.remove("swiper-slide");
+			});
+		}
+
+		function initSwiper() {
+			addSwiperClasses();
+			swiper = new Swiper(target, {
+				modules: [Navigation],
+				slidesPerView: 2,
+				speed: 500,
+				spaceBetween: 32,
+				navigation: {
+					nextEl: nextBtn,
+					prevEl: prevBtn,
+				},
+			});
+		}
+
+		function destroySwiper() {
+			if (swiper) {
+				swiper.destroy(true, true);
+				swiper = null;
+			}
+			removeSwiperClasses(); // Remove classes after destroying Swiper
+		}
+
+		breakpoint.addEventListener("change", (event) => {
+			if (event.matches) {
+				initSwiper();
+			} else {
+				destroySwiper();
+			}
+		});
+
+		// Try to init swiper when page loads if the breakpoint matches
+		if (breakpoint.matches) {
+			initSwiper();
+		} else {
+			destroySwiper();
+		}
+	});
+}
+
+function testimonialsSwiper() {
+	const swiperTarget = document.querySelector(".testimonials_swiper");
+	if (!swiperTarget) return;
+
+	const currentEl = document.querySelector('[data-testimonial-slider="current"]');
+	const totalEl = document.querySelector('[data-testimonial-slider="total"]');
+
+	const swiper = new Swiper(swiperTarget, {
+		modules: [Navigation],
+		slidesPerView: 1,
+		speed: 500,
+		spaceBetween: 32,
+		navigation: {
+			prevEl: ".testimonials_nav-btn.is-prev",
+			nextEl: ".testimonials_nav-btn.is-next",
+		},
+	});
+
+	const slideCount = swiper.slides.length;
+	totalEl.textContent = slideCount;
+
+	swiper.on("activeIndexChange", () => {
+		const currentIndex = swiper.activeIndex + 1;
+		currentEl.textContent = currentIndex;
+	});
+}
+
+function teamMembersSwiper() {
+	const swiperTarget = document.querySelector(".company-members_collection");
+	if (!swiperTarget) return;
+
+	// Elements to add swiper classes dynamically
+	const wrapper = swiperTarget.querySelector('[data-members-swiper="wrap"]');
+	const slides = swiperTarget.querySelectorAll('[data-members-swiper="slide"]');
+
 	let swiper = null;
+	const breakpoint = window.matchMedia("(max-width: 991px)");
+
+	function addSwiperClasses() {
+		wrapper.classList.add("swiper-wrapper");
+		slides.forEach((slide) => {
+			slide.classList.add("swiper-slide");
+		});
+	}
+
+	function removeSwiperClasses() {
+		wrapper.classList.remove("swiper-wrapper");
+		slides.forEach((slide) => {
+			slide.classList.remove("swiper-slide");
+		});
+	}
+
+	function initSwiper() {
+		addSwiperClasses();
+		swiper = new Swiper(swiperTarget, {
+			slidesPerView: 1.3,
+			speed: 500,
+			spaceBetween: 20,
+			breakpoints: {
+				768: {
+					slidesPerView: 2.5,
+					spaceBetween: 32,
+				},
+			},
+		});
+	}
+
+	function destroySwiper() {
+		if (swiper) {
+			swiper.destroy(true, true);
+			removeSwiperClasses();
+			swiper = null;
+		}
+	}
 
 	breakpoint.addEventListener("change", (event) => {
 		if (event.matches) {
 			initSwiper();
 		} else {
-			if (swiper) {
-				swiper.destroy(true, true);
-			}
+			destroySwiper();
 		}
 	});
 
-	function initSwiper() {
-		swiper = new Swiper(relatedPostsWrap, {
-			modules: [Navigation, Pagination],
-			slidesPerView: 1,
-			spaceBetween: 20,
-			pagination: {
-				bulletClass: "related-posts_pagination-bullet",
-				bulletActiveClass: "is-active",
-				el: ".related-posts_pagination",
-			},
-			navigation: {
-				nextEl: ".related-posts_btn-next",
-				prevEl: ".related-posts_btn-prev",
-			},
-		});
-	}
-
-	// Try to init swiper when page loads
+	// Try to init swiper when page loads if the breakpoint matches
 	if (breakpoint.matches) {
 		initSwiper();
+	} else {
+		destroySwiper();
 	}
+}
+
+function emptyPositions() {
+	const positionsCollection = document.querySelector('[data-empty-positions="collection"]');
+	if (!positionsCollection) return;
+	const emptyCollection = positionsCollection.querySelector(".w-dyn-empty");
+	if (!emptyCollection) {
+		return;
+	} else {
+		positionsCollection.classList.add("is-empty");
+	}
+}
+
+function customFormValidation() {
+	const forms = document.querySelectorAll("form");
+	if (!forms.length) return;
+	$("form").each(function () {
+		$(this).validate({
+			rules: {
+				Name: {
+					required: true,
+					minlength: 2,
+				},
+				Email: {
+					required: true,
+					email: true,
+				},
+				Discipline: {
+					required: true,
+				},
+				Discipline: {
+					required: true,
+				},
+				LinkedinOrPortfolio: {
+					url: true,
+				},
+				PrivacyPolicy: {
+					required: true,
+				},
+			},
+			messages: {
+				Name: {
+					required: "Please enter your name",
+					minlength: "Your name must consist of at least 2 characters",
+				},
+				Email: {
+					required: "Please enter your email",
+					email: "Please enter a valid email address",
+				},
+				Discipline: {
+					required: "Please enter your discipline",
+				},
+				LinkedinOrPortfolio: {
+					url: "Please enter a valid URL",
+				},
+			},
+			focusInvalid: false,
+			highlight: function (element) {
+				// Check if the element is the checkbox and add the error class to its wrapper
+				if (element.type === "checkbox") {
+					$(element).closest(".form_checkbox-wrap").find(".form_checkbox").addClass("checkbox-error");
+				}
+			},
+			unhighlight: function (element) {
+				// Remove the error class from the wrapper if the checkbox is valid
+				if (element.type === "checkbox") {
+					$(element).closest(".form_checkbox-wrap").find(".form_checkbox").removeClass("checkbox-error");
+				}
+			},
+			errorPlacement: function (error, element) {
+				// Prevent error message display for the checkbox
+				if (element.attr("type") === "checkbox") {
+					return; // Do nothing for checkboxes, so no error message is shown
+				} else {
+					error.insertAfter(element); // Place error message for other elements
+				}
+			},
+		});
+	});
+}
+
+function formSuccessState() {
+	// Select the form blocks containing the form and success message elements
+	const formBlocks = document.querySelectorAll('[data-form-success="form-block"]');
+
+	formBlocks.forEach((formBlock) => {
+		const form = formBlock.querySelector("form"); // Select the form within this block
+		const successMessage = formBlock.querySelector('[data-form-success="success-msg"]');
+
+		if (!successMessage || !form) return;
+
+		const btnArrows = formBlock.querySelector('[data-form-success="btn-arrows"]');
+		const successArrows = formBlock.querySelector('[data-form-success="success-icon"]');
+		const submitBtnText = formBlock.querySelector('[data-form-success="submit-text"]');
+
+		// Define the custom function to run on successful submission
+		function successFunction() {
+			btnArrows.style.display = "none";
+			successArrows.style.display = "flex";
+			submitBtnText.textContent = "Sent";
+		}
+
+		// Set up Mutation Observer for success message visibility
+		const successObserver = new MutationObserver((mutationsList) => {
+			mutationsList.forEach((mutation) => {
+				if (mutation.type === "attributes" && mutation.attributeName === "style" && successMessage.style.display === "block") {
+					successFunction();
+					successObserver.disconnect();
+				}
+			});
+		});
+
+		// Start observing the success message element for style attribute changes
+		successObserver.observe(successMessage, { attributes: true });
+
+		// Set up another Mutation Observer to prevent form from being hidden
+		const formObserver = new MutationObserver((mutationsList) => {
+			mutationsList.forEach((mutation) => {
+				if (mutation.type === "attributes" && mutation.attributeName === "style") {
+					// Check if Webflow has set display: none on the form
+					if (form.style.display === "none") {
+						form.style.display = "block";
+					}
+				}
+			});
+		});
+
+		// Start observing the form element for style attribute changes
+		formObserver.observe(form, { attributes: true });
+	});
+}
+
+function formURLfield() {
+	const urlField = document.querySelector('input[name="url"]');
+	if (!urlField) return;
+
+	const pageURL = window.location.href;
+	urlField.value = pageURL;
+}
+
+function cmsPagination() {
+	window.fsAttributes = window.fsAttributes || [];
+	window.fsAttributes.push([
+		"cmsload",
+		(listInstances) => {
+			// The callback passes a `listInstances` array with all the `CMSList` instances on the page.
+			const [listInstance] = listInstances;
+
+			let totalPages = listInstance.totalPages;
+			let currentPage = listInstance.currentPage;
+			const prevButton = listInstance.paginationPrevious;
+			const nextButton = listInstance.paginationNext;
+			const currentEl = document.querySelector('[data-mobile-pagination="current"]');
+			const totalEl = document.querySelector('[data-mobile-pagination="total"]');
+
+			function setTotalPages(setTotalPages) {
+				totalEl.textContent = totalPages;
+			}
+
+			setTotalPages(totalPages);
+
+			function stylePaginationBtn(currentPage) {
+				if (currentPage <= 1) {
+					prevButton.classList.add("is-disabled");
+				} else if (currentPage >= totalPages) {
+					nextButton.classList.add("is-disabled");
+				} else {
+					prevButton.classList.remove("is-disabled");
+					nextButton.classList.remove("is-disabled");
+				}
+			}
+			stylePaginationBtn(currentPage);
+
+			function mobileCurrentPagination(currentPage) {
+				currentEl.textContent = currentPage;
+			}
+
+			mobileCurrentPagination(currentPage);
+
+			// The `renderitems` event runs whenever the list renders items after switching pages.
+			listInstance.on("renderitems", (renderedItems) => {
+				currentPage = listInstance.currentPage;
+				totalPages = listInstance.totalPages;
+				stylePaginationBtn(currentPage);
+				mobileCurrentPagination(currentPage);
+				// On mobile case studies have filters so page count is dynamic
+				setTotalPages();
+			});
+		},
+	]);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
 	gsap.registerPlugin(ScrollTrigger);
+	lenisSmoothScroll();
 	refreshScrollTriggers();
 	headerAnimation();
 	headerMenuAnimation();
@@ -668,5 +1101,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	indexSpotlightSlider();
 	indexVideoReveal();
 	textRevealAnimation();
-	relatedPostsSwiper();
+	mobileOnlySwiper();
+	dataProjectsSwiper();
+	testimonialsSwiper();
+	teamMembersSwiper();
+	emptyPositions();
+	customFormValidation();
+	formSuccessState();
+	formURLfield();
+	cmsPagination();
 });
