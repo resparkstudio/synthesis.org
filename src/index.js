@@ -1033,6 +1033,9 @@ function formURLfield() {
 }
 
 function cmsPagination() {
+	const paginationList = document.querySelector('[data-custom-pagination="collection"]');
+	if (!paginationList) return;
+
 	window.fsAttributes = window.fsAttributes || [];
 	window.fsAttributes.push([
 		"cmsload",
@@ -1084,6 +1087,49 @@ function cmsPagination() {
 	]);
 }
 
+function setCaseUrl() {
+	const casesPaginatedCollection = document.querySelector('[data-case-url="paginated-collection"]');
+	const casesCollection = document.querySelector('[data-case-url="collection"]');
+
+	if (casesPaginatedCollection) {
+		setPaginatedUrl();
+	} else if (casesCollection) {
+		setUrl();
+	} else {
+		return;
+	}
+
+	function setUrl() {
+		const posts = casesCollection.querySelectorAll('[data-case-url="post"]');
+		posts.forEach((post) => {
+			const postUrl = post.querySelector('[data-case-url="url"]').href;
+			const postWrap = post.querySelector('[data-case-url="wrap"]');
+			postWrap.addEventListener("click", () => {
+				window.location.href = postUrl;
+			});
+		});
+	}
+
+	function setPaginatedUrl() {
+		window.fsAttributes = window.fsAttributes || [];
+		window.fsAttributes.push([
+			"cmsload",
+			(listInstances) => {
+				// The callback passes a `listInstances` array with all the `CMSList` instances on the page.
+				const [listInstance] = listInstances;
+				const allPosts = listInstance.items;
+
+				allPosts.forEach((post) => {
+					const postUrl = post.href;
+					post.element.addEventListener("click", () => {
+						window.location.href = postUrl;
+					});
+				});
+			},
+		]);
+	}
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 	gsap.registerPlugin(ScrollTrigger);
 	lenisSmoothScroll();
@@ -1110,4 +1156,5 @@ document.addEventListener("DOMContentLoaded", () => {
 	formSuccessState();
 	formURLfield();
 	cmsPagination();
+	setCaseUrl();
 });
