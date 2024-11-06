@@ -486,3 +486,324 @@ html.lenis body {
 	cursor: default;
 	color: var(--text--text_grey);
 }
+
+/* COOKIES */
+.cky-consent-bar {
+	padding: 2rem !important;
+}
+
+.cky-title {
+	margin-bottom: 0 !important;
+}
+
+.cky-notice-des * {
+	font-size: 1.25rem !important;
+	line-height: 1.5rem !important;
+}
+
+.cky-notice-des {
+	max-width: 60.625rem !important;
+}
+
+.cky-btn {
+	font-size: 0.875rem !important;
+	text-transform: uppercase !important;
+	padding: 0.625rem 1rem !important;
+	border-radius: 100rem !important;
+	border-width: 1px !important;
+	margin: 0 !important;
+	transition: 0.2s;
+}
+.cky-btn:hover {
+	opacity: 1 !important;
+}
+
+.cky-btn.cky-btn-preferences {
+	border-color: black !important;
+	color: black !important;
+}
+
+.cky-prefrence-btn-wrapper .cky-btn {
+	flex: none !important;
+}
+
+.cky-notice-btn-wrapper {
+	gap: 0.5rem !important;
+	margin: 0 !important;
+}
+
+.cky-preference-center {
+	background-color: white !important;
+	padding: 3rem !important;
+	border-radius: 0 !important;
+	width: 50rem !important;
+	height: 40rem !important;
+	max-height: 90vh !important;
+}
+
+.cky-preference-header,
+.cky-accordion {
+	border: none !important;
+}
+
+.cky-horizontal-separator,
+.cky-footer-shadow,
+.cky-accordion-chevron {
+	display: none !important;
+}
+
+.cky-preference-content-wrapper,
+.cky-accordion-btn,
+.cky-accordion-header-des,
+.cky-chevron-right,
+.cky-preference-title {
+	color: black !important;
+}
+
+.cky-prefrence-btn-wrapper {
+	border: none !important;
+	justify-content: end !important;
+}
+
+.cky-preference-header,
+.cky-preference-body-wrapper,
+.cky-prefrence-btn-wrapper,
+.cky-preference-content-wrapper {
+	padding: 0 !important;
+}
+
+.cky-footer-wrapper div:last-child {
+	display: none !important;
+}
+
+.cky-footer-wrapper {
+	margin-top: 2rem !important;
+}
+
+.cky-preference-title {
+	font-weight: 400 !important;
+	font-size: 2.5rem !important;
+	line-height: 2.75rem !important;
+}
+
+.cky-preference-body-wrapper {
+	margin-top: 1rem !important;
+}
+.cky-preference-content-wrapper {
+	font-size: 1rem !important;
+	line-height: 1.5rem !important;
+	margin-bottom: 2rem !important;
+}
+
+.cky-accordion-header .cky-accordion-btn {
+	font-size: 1.5rem !important;
+	line-height: 1.75rem !important;
+	font-weight: 400 !important;
+}
+
+.cky-accordion-item .cky-accordion-header {
+	flex-direction: row-reverse !important;
+	justify-content: start !important;
+	gap: 1.5rem !important;
+}
+
+.cky-switch input[type="checkbox"] {
+	height: 1.5rem !important;
+	width: 1.5rem !important;
+	border-radius: 0 !important;
+	background-color: white !important;
+	border: solid 1px black !important;
+	position: relative !important;
+}
+
+.cky-switch input[type="checkbox"]:checked {
+	background-color: black !important;
+}
+
+.cky-switch input[type="checkbox"]::before {
+	background-color: transparent !important;
+	border-radius: 0 !important;
+	width: 1.5rem !important;
+	height: 1.5rem !important;
+	position: absolute !important;
+	left: -1px !important;
+	bottom: 0 !important;
+	right: 0 !important;
+	top: -1px !important;
+	content: "" !important;
+	background-image: url("https://cdn.prod.website-files.com/66deddeed7fdcd89b6b4d6a7/672bb864723aa5a0370eae81_checkmark.svg") !important;
+	background-size: 100% 100% !important;
+	transition: none !important;
+	opacity: 0 !important;
+}
+
+.cky-switch input[type="checkbox"]:checked::before {
+	opacity: 1 !important;
+	transform: none !important;
+}
+
+.cky-always-active {
+	width: 1.5rem !important;
+	height: 1.5rem !important;
+	background-color: white !important;
+	border: solid 1px black !important;
+	background-color: black !important;
+	opacity: 0.5 !important;
+	position: absolute !important;
+	top: 2px !important;
+	left: 0 !important;
+}
+
+.cky-always-active::before {
+	background-color: transparent !important;
+	border-radius: 0 !important;
+	width: 1.5rem !important;
+	height: 1.5rem !important;
+	position: absolute !important;
+	left: -1px !important;
+	bottom: 0 !important;
+	right: 0 !important;
+	top: -1px !important;
+	content: "" !important;
+	background-image: url("https://cdn.prod.website-files.com/66deddeed7fdcd89b6b4d6a7/672bb864723aa5a0370eae81_checkmark.svg") !important;
+	background-size: 100% 100% !important;
+	transition: none !important;
+}
+
+.cky-accordion-header {
+	position: relative !important;
+	padding-left: 3rem !important;
+}
+
+.cky-switch {
+	position: absolute !important;
+	top: 2px !important;
+	left: 0px !important;
+}
+
+.cky-accordion-header-des {
+	margin: 0.375rem 0 0 3rem !important;
+}
+
+.cky-accordion .cky-accordion-item,
+.cky-accordion-wrapper {
+	margin: 0 !important;
+}
+
+.cky-accordion-wrapper {
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 1.5rem !important;
+}
+
+.cky-accordion.cky-accordion-active .cky-accordion-body {
+	display: none !important;
+}
+
+.cky-btn-close {
+	position: absolute !important;
+	top: 1.5rem !important;
+	right: 1.5rem !important;
+}
+
+.cky-preference-header .cky-btn-close img {
+	height: 2rem !important;
+	width: 2rem !important;
+}
+
+.cky-consent-container .cky-consent-bar {
+	box-shadow: none !important;
+}
+
+@media only screen and (max-width: 845px) {
+	.cky-modal {
+		max-width: none !important;
+	}
+}
+
+@media only screen and (max-width: 768px) {
+	.cky-consent-bar {
+		padding: 1.25rem !important;
+	}
+	.cky-notice-des * {
+		font-size: 1rem !important;
+		line-height: 1.375rem !important;
+	}
+	.cky-notice-btn-wrapper {
+		margin-top: 2.5rem !important;
+	}
+	.cky-notice-btn-wrapper .cky-btn {
+		flex: none !important;
+	}
+	.cky-preference-center {
+		height: 100vh !important;
+		max-height: none !important;
+		width: 100vw !important;
+		padding: 3.5rem 1.25rem 2rem 1.25rem !important;
+	}
+
+	.cky-preference-title {
+		font-size: 2rem !important;
+		line-height: 2.25rem !important;
+	}
+
+	.cky-preference-body-wrapper {
+		margin-top: 0.5rem !important;
+	}
+
+	.cky-btn-close {
+		top: 1rem !important;
+		right: 1.25rem !important;
+	}
+
+	.cky-accordion-header .cky-accordion-btn {
+		font-size: 1.25rem !important;
+		line-height: 1.75rem !important;
+	}
+
+	.cky-switch input[type="checkbox"],
+	.cky-switch input[type="checkbox"]::before,
+	.cky-always-active,
+	.cky-always-active::before {
+		width: 1.25rem !important;
+		height: 1.25rem !important;
+	}
+	.cky-switch input[type="checkbox"],
+	.cky-always-active {
+		top: 4px !important;
+	}
+
+	.cky-accordion-header {
+		padding-left: 2.5rem !important;
+	}
+
+	.cky-accordion-header-des {
+		margin-left: 2.5rem !important;
+		margin-top: 0.25rem !important;
+	}
+
+	.cky-footer-wrapper {
+		margin-top: 4.5rem !important;
+	}
+}
+
+@media only screen and (max-width: 576px) {
+	.cky-custom-brand-logo-wrapper,
+	.cky-notice .cky-title,
+	.cky-notice-des,
+	.cky-notice-btn-wrapper {
+		padding: unset !important;
+	}
+	.cky-notice-btn-wrapper {
+		flex-direction: row-reverse !important;
+	}
+	.cky-notice-btn-wrapper .cky-btn {
+		width: auto !important;
+	}
+	.cky-prefrence-btn-wrapper {
+		flex-direction: row-reverse !important;
+	}
+	.cky-prefrence-btn-wrapper .cky-btn {
+		width: auto !important;
+	}
+}
