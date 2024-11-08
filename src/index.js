@@ -922,9 +922,6 @@ function customFormValidation() {
 				Discipline: {
 					required: true,
 				},
-				Discipline: {
-					required: true,
-				},
 				LinkedinOrPortfolio: {
 					url: true,
 				},
@@ -1121,7 +1118,6 @@ function setCaseUrl() {
 
 				allPosts.forEach((post) => {
 					const postUrl = post.href;
-					console.log(postUrl);
 					post.element.addEventListener("click", () => {
 						window.location.href = postUrl;
 					});
