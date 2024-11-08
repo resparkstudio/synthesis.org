@@ -1106,7 +1106,6 @@ function setCaseUrl() {
 			const postWrap = post.querySelector('[data-case-url="wrap"]');
 			postWrap.addEventListener("click", () => {
 				window.location.href = postUrl;
-				console.log("post clicked");
 			});
 		});
 	}
@@ -1124,8 +1123,7 @@ function setCaseUrl() {
 					const postUrl = post.href;
 					console.log(postUrl);
 					post.element.addEventListener("click", () => {
-						// window.location.href = postUrl;
-						console.log("paginated post clicked");
+						window.location.href = postUrl;
 					});
 				});
 			},
