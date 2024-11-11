@@ -94,61 +94,51 @@ function headerAnimation() {
 	const header = document.querySelector(".header");
 	if (!header) return;
 
-	let lastScrollY = window.scrollY;
+	const logo = header.querySelector('[data-header-scroll="logo"]');
 
 	let hideTl = gsap.timeline({
-		paused: true,
+		scrollTrigger: {
+			start: "top -32px",
+			toggleActions: "play none none reverse",
+		},
 	});
 
-	hideTl.to(header, {
-		y: "-100%",
-		duration: 0.3,
+	hideTl.to(logo, {
+		y: "-130%",
+		duration: 0.5,
 		ease: "power2.inOut",
-		onComplete: () => {
-			header.classList.add("is-scroll");
-		},
-	});
-
-	ScrollTrigger.create({
-		start: "top top",
-		end: "100px top", // Background change persists beyond 100px
-		onLeaveBack: () => {
-			header.classList.remove("is-scroll");
-		},
-	});
-
-	window.addEventListener("scroll", () => {
-		if (menuOpen) return;
-		const currentScrollY = window.scrollY;
-
-		if (currentScrollY > lastScrollY) {
-			hideTl.play();
-		} else {
-			hideTl.reverse();
-		}
-
-		lastScrollY = currentScrollY;
 	});
 }
 
 function headerMenuAnimation() {
-	const menuWrap = document.querySelector(".menu");
-	if (!menuWrap) return;
+	const menu = document.querySelector('[data-menu="menu"]');
+	if (!menu) return;
 
 	// Elements
+	const menuWrap = document.querySelector('[data-menu="wrap"]');
+	const menuOverlay = menu.querySelector('[data-menu="overlay"]');
 	const menuButtons = document.querySelectorAll('[data-menu="toggle"]');
 	const menuCloseBtn = document.querySelector("#menu-close-btn");
-	const menuContentWrap = document.querySelector(".menu_container");
+	const menuContentWrap = menu.querySelector(".menu_container");
 	const hamburgerBtn = document.querySelector(".nav-bar_hamburger");
 
 	let openTl = gsap.timeline({ paused: true });
 	openTl
-		.set(menuWrap, { display: "block" })
+		.set(menu, { display: "block" })
 		.to([menuWrap, menuContentWrap], {
 			y: 0,
 			duration: 1,
 			ease: "power3.inOut",
 		})
+		.to(
+			hamburgerBtn,
+			{
+				backgroundColor: "#1C1C1C",
+				borderColor: "#1C1C1C",
+				duration: 0.3,
+			},
+			"<0.12"
+		)
 		.to(
 			".nav-bar_hamburger-line",
 			{
@@ -200,6 +190,8 @@ function headerMenuAnimation() {
 	menuButtons.forEach((btn) => {
 		btn.addEventListener("click", toggleMenu);
 	});
+
+	menuOverlay.addEventListener("click", toggleMenu);
 }
 
 function mobileMenuAccordion() {
@@ -417,6 +409,9 @@ function newsMasonryGrid() {
 
 	magicGrid.listen();
 
+	magicGrid.onPositionComplete(() => {
+		ScrollTrigger.refresh();
+	});
 	const initialNewsPosts = document.querySelectorAll('[data-masonry-post="true"]');
 	styleArchivePosts(initialNewsPosts);
 
@@ -813,6 +808,7 @@ function testimonialsSwiper() {
 	const swiper = new Swiper(swiperTarget, {
 		modules: [Navigation],
 		slidesPerView: 1,
+		autoHeight: true,
 		speed: 500,
 		spaceBetween: 32,
 		navigation: {
@@ -898,10 +894,23 @@ function emptyPositions() {
 	const positionsCollection = document.querySelector('[data-empty-positions="collection"]');
 	if (!positionsCollection) return;
 	const emptyCollection = positionsCollection.querySelector(".w-dyn-empty");
+
+	function hideSection() {
+		const collectionSection = positionsCollection.closest("section");
+		collectionSection.style.display = "none";
+
+		const contactSection = document.querySelector('[data-empty-positions="contact-section"]');
+		if (!contactSection) return;
+
+		contactSection.classList.add("positions-empty");
+		const contactSectionTitle = contactSection.querySelector('[data-empty-positions="contact-title"]');
+		contactSectionTitle.textContent = "NO OPEN POSITIONS?";
+	}
+
 	if (!emptyCollection) {
 		return;
 	} else {
-		positionsCollection.classList.add("is-empty");
+		hideSection();
 	}
 }
 
@@ -1071,6 +1080,19 @@ function cmsPagination() {
 
 			mobileCurrentPagination(currentPage);
 
+			function paginationAnchor() {
+				const anchorTarget = document.querySelector('[data-pagination-anchor="target"]');
+				if (!anchorTarget) return;
+
+				const targetPosition = anchorTarget.getBoundingClientRect().top + window.scrollY;
+				setTimeout(() => {
+					window.scrollTo({
+						top: targetPosition,
+						behavior: "smooth",
+					});
+				}, 400);
+			}
+
 			// The `renderitems` event runs whenever the list renders items after switching pages.
 			listInstance.on("renderitems", (renderedItems) => {
 				currentPage = listInstance.currentPage;
@@ -1079,6 +1101,7 @@ function cmsPagination() {
 				mobileCurrentPagination(currentPage);
 				// On mobile case studies have filters so page count is dynamic
 				setTotalPages();
+				paginationAnchor();
 			});
 		},
 	]);
