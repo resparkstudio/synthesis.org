@@ -10,6 +10,21 @@
 	display: none;
 }
 
+/* HOME VIDEO REVEAL */
+.home-header-animation .nav-bar_logo-link,
+.home-header-animation .button.is-white-bg,
+.home-header-animation .nav-bar_hamburger {
+	transform: translateY(100%);
+}
+
+.home-hero_icon {
+	transform: translateX(-100%);
+}
+
+.home-hero_bottom-content {
+	opacity: 0;
+}
+
 .home-spotlights_collection::-webkit-scrollbar,
 .post-filters::-webkit-scrollbar {
 	display: none; /* Hide scrollbar */
@@ -242,15 +257,23 @@
 
 [data-text-reveal="text"] {
 	font-kerning: none;
+	display: flex;
+	flex-wrap: wrap;
+	row-gap: 0.5rem;
+	align-items: start;
 }
 
-[data-text-reveal="wrap"] {
+[data-text-reveal="text"] .line {
 	position: relative;
 	overflow: hidden;
-	width: auto;
+	width: auto !important;
 }
 
-[data-text-reveal="wrap"] .text-animation_overlay {
+[data-text-reveal="text"] .word {
+	opacity: 0;
+}
+
+[data-text-reveal="text"] .text-animation_overlay {
 	position: absolute;
 	background-color: white;
 	width: 100%;
@@ -267,10 +290,6 @@
 	}
 }
 
-[data-text-reveal="text"] {
-	opacity: 0;
-}
-
 /* CASE STUDY INNER */
 .case-hero_heading {
 	display: flex;
@@ -279,15 +298,15 @@
 	gap: 0.5rem;
 }
 
-.case-hero_heading [data-text-reveal="wrap"]:nth-child(odd) {
+.case-hero_heading [data-text-reveal="text"]:nth-child(odd) {
 	align-self: start;
 }
-.case-hero_heading [data-text-reveal="wrap"]:nth-child(even) {
+.case-hero_heading [data-text-reveal="text"]:nth-child(even) {
 	align-self: end;
 }
 
 @media only screen and (max-width: 991px) {
-	.case-hero_heading [data-text-reveal="wrap"]:nth-child(even) {
+	.case-hero_heading [data-text-reveal="text"]:nth-child(even) {
 		align-self: start;
 	}
 }
@@ -331,6 +350,10 @@
 .career-things_navigation-wrap .swiper-btn-next.swiper-button-disabled .swiper-nav-arrow,
 .career-things_navigation-wrap .swiper-btn-prev.swiper-button-disabled .swiper-nav-arrow {
 	color: #515151;
+}
+
+.swiper-button-disabled {
+	pointer-events: none;
 }
 
 @media only screen and (min-width: 768px) {
@@ -437,6 +460,7 @@ html.lenis body {
 .post_pagination_btn.is-disabled {
 	cursor: default;
 	color: var(--text--text_grey);
+	pointer-events: none;
 }
 
 /* COOKIES */

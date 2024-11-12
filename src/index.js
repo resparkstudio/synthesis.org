@@ -568,89 +568,132 @@ function indexVideoReveal() {
 	const selectedVideos = selectedVideoBlock.querySelectorAll(".home-hero_video");
 	selectedVideoBlock.style.display = "flex";
 
+	let loadedVideos = 0;
+	selectedVideos.forEach((videoWrap) => {
+		const videoEl = videoWrap.querySelector("video");
+		videoEl.addEventListener("loadeddata", playRevealAnimation);
+	});
+
+	function playRevealAnimation() {
+		loadedVideos++;
+		if (loadedVideos < 2) return;
+
+		tl.play();
+	}
+
 	const tl = gsap.timeline({
+		paused: true,
 		onComplete: () => {
 			ScrollTrigger.refresh();
 		},
 	});
 	tl.to(selectedOverlays, {
 		x: "0%",
-		duration: 0.8,
+		duration: 1.2,
 		ease: "power4.inOut",
+		stagger: 0.15,
 	})
+		.to(
+			".home-hero_icon",
+			{
+				x: 0,
+				duration: 0.6,
+				ease: "power2.out",
+			},
+			"<+0.6"
+		)
 		.set(selectedVideos, {
 			opacity: 1,
 		})
-		.to(
-			selectedOverlays,
+		.to(selectedOverlays, {
+			x: "100%",
+			duration: 1.2,
+			ease: "power4.inOut",
+			stagger: 0.15,
+		})
+		.from(
+			".home-hero_video",
 			{
-				x: "100%",
-				duration: 0.8,
-				ease: "power4.inOut",
+				scale: 1.4,
+				duration: 2,
+				ease: "power3.out",
 			},
-			"+=0.2"
+			"<+0.3"
 		)
 		.to(
-			[".index-header-fade", ".home-hero_icon", ".home-hero_bottom-content"],
+			[".nav-bar_logo-link", ".button.is-white-bg", ".nav-bar_hamburger"],
+			{
+				y: 0,
+				duration: 0.5,
+				ease: "power2.out",
+			},
+			"-=0.9"
+		)
+		.to(
+			".home-hero_bottom-content",
 			{
 				opacity: 1,
-				duration: 1,
+				duration: 0.5,
 			},
-			"+=0.1"
+			"<"
 		);
 }
 
 function textRevealAnimation() {
-	let animationTargets = document.querySelectorAll('[data-text-reveal="wrap"]');
-	if (animationTargets.length === 0) return;
+	const animatedTexts = document.querySelectorAll('[data-text-reveal="text"]');
+	if (!animatedTexts.length) return;
 
-	animationTargets.forEach((target) => {
-		// Split text into chars for animation
-		const animationText = target.querySelector('[data-text-reveal="text"]');
-		const splitText = new SplitType(animationText, { types: "chars" });
-		const animationChars = splitText.chars;
+	animatedTexts.forEach((animatedText) => {
+		const splitText = new SplitType(animatedText);
 
-		// Create and insert text overlay into DOM
-		const textOverlay = document.createElement("div");
-		textOverlay.className = "text-animation_overlay";
-		target.appendChild(textOverlay);
+		const lines = animatedText.querySelectorAll(".line");
 
-		// Animate overlay
-		const tl = gsap.timeline();
-		tl.to(textOverlay, {
-			x: "0%",
-			duration: 0.8,
-			ease: "power4.inOut",
-		})
-			.set(animationText, {
-				opacity: 1,
+		lines.forEach((line) => {
+			// Create and insert text overlay into DOM
+			const textOverlay = document.createElement("div");
+			textOverlay.className = "text-animation_overlay";
+			line.appendChild(textOverlay);
+
+			const words = line.querySelectorAll(".word");
+			const chars = Array.from(line.querySelectorAll(".char"));
+
+			// Animate overlay
+			const tl = gsap.timeline();
+			tl.to(textOverlay, {
+				x: "0%",
+				duration: 0.8,
+				ease: "power4.inOut",
 			})
-			.to(
-				textOverlay,
-				{
-					x: "100%",
-					duration: 0.8,
-					ease: "power4.inOut",
-				},
-				"+=0.2"
-			)
-			.fromTo(
-				animationChars.slice(1),
-				{
-					x: (i, target) => {
-						return (-0.1 * i) / 2 + "em";
+				.set(words, {
+					autoAlpha: 1,
+				})
+				.to(
+					textOverlay,
+					{
+						x: "100%",
+						duration: 0.8,
+						ease: "power4.inOut",
 					},
-				},
-				{
-					x: "0px",
-					duration: 0.8,
-					ease: "power3.out",
-					stagger: {
-						each: 0.02,
+					"+=0.2"
+				)
+				.fromTo(
+					chars.slice(1),
+					{
+						x: (i, target) => {
+							return (-0.1 * i) / 2 + "em";
+						},
 					},
-				},
-				"<+0.2"
-			);
+					{
+						x: "0px",
+						duration: 0.8,
+						ease: "power3.out",
+						stagger: {
+							each: 0.01,
+						},
+					},
+					"<+0.2"
+				);
+		});
 	});
 }
 
@@ -895,16 +938,21 @@ function emptyPositions() {
 	if (!positionsCollection) return;
 	const emptyCollection = positionsCollection.querySelector(".w-dyn-empty");
 
+	const collectionSection = positionsCollection.closest("section");
+	collectionSection.style.display = "none";
+
+	const anchorBtn = document.querySelector('[data-empty-positions="anchor-btn"]');
 	function hideSection() {
-		const collectionSection = positionsCollection.closest("section");
-		collectionSection.style.display = "none";
+		if (anchorBtn) {
+			anchorBtn.style.display = "none";
+		}
 
 		const contactSection = document.querySelector('[data-empty-positions="contact-section"]');
-		if (!contactSection) return;
-
-		contactSection.classList.add("positions-empty");
-		const contactSectionTitle = contactSection.querySelector('[data-empty-positions="contact-title"]');
-		contactSectionTitle.textContent = "NO OPEN POSITIONS?";
+		if (contactSection) {
+			contactSection.classList.add("positions-empty");
+			const contactSectionTitle = contactSection.querySelector('[data-empty-positions="contact-title"]');
+			contactSectionTitle.textContent = "NO OPEN POSITIONS?";
+		}
 	}
 
 	if (!emptyCollection) {
@@ -1065,7 +1113,9 @@ function cmsPagination() {
 			function stylePaginationBtn(currentPage) {
 				if (currentPage <= 1) {
 					prevButton.classList.add("is-disabled");
+					nextButton.classList.remove("is-disabled");
 				} else if (currentPage >= totalPages) {
+					prevButton.classList.remove("is-disabled");
 					nextButton.classList.add("is-disabled");
 				} else {
 					prevButton.classList.remove("is-disabled");
