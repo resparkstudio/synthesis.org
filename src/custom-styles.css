@@ -1,27 +1,3 @@
-.button_arrow-icon {
-	transition: transform 0.5s cubic-bezier(0.68, -0.11, 0.265, 1.11);
-}
-
-/* Hover only on desktop */
-@media only screen and (min-width: 992px) {
-	.arrow-button:hover .button_arrow-icon.is-visible {
-		transform: translateX(150%);
-	}
-
-	.arrow-button:hover .button_arrow-icon.is-hidden {
-		transform: translateX(0%);
-	}
-
-	/* Vertical arrow btn */
-	.arrow-button:hover .button_arrow-icon.is-visible.is-vertical {
-		transform: translateY(150%);
-	}
-
-	.arrow-button:hover .button_arrow-icon.is-hidden.is-vertical {
-		transform: translateY(0%);
-	}
-}
-
 .scroll-disabled {
 	overflow: hidden;
 }
