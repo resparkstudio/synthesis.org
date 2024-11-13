@@ -571,7 +571,9 @@ function indexVideoReveal() {
 	let loadedVideos = 0;
 	selectedVideos.forEach((videoWrap) => {
 		const videoEl = videoWrap.querySelector("video");
-		videoEl.addEventListener("loadeddata", playRevealAnimation);
+		videoEl.onloadeddata = function () {
+			playRevealAnimation();
+		};
 	});
 
 	function playRevealAnimation() {
