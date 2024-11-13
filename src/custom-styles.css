@@ -11,6 +11,10 @@
 }
 
 /* HOME VIDEO REVEAL */
+.home-hero_video.is-robot-hand video {
+	object-position: 50% 33%;
+}
+
 .home-header-animation .nav-bar_logo-link,
 .home-header-animation .button.is-white-bg,
 .home-header-animation .nav-bar_hamburger {
@@ -288,6 +292,11 @@
 		flex-direction: column;
 		align-items: start;
 	}
+}
+
+/* CASE ARCHIVE */
+.case-studies_categories-list .case-studies_category:first-of-type .post-taxonomy_divider {
+	display: none;
 }
 
 /* CASE STUDY INNER */

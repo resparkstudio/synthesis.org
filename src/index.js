@@ -78,6 +78,12 @@ function refreshScrollTriggers() {
 		"cmscombine",
 		(listInstances) => {
 			const [listInstance] = listInstances;
+
+			if (!listInstance) {
+				lenisSidebarScroll();
+				return;
+			}
+
 			listInstance.on("renderitems", (renderedItems) => {
 				setTimeout(() => {
 					ScrollTrigger.refresh();
@@ -300,7 +306,8 @@ function currentYear() {
 function combineIndexPosts() {
 	let postsArray = document.querySelectorAll('[data-combine-posts="post"]');
 
-	if (!postsArray) return;
+	if (!postsArray.length) return;
+	window.fsAttributes = window.fsAttributes || [];
 
 	// CMS Combine functionality
 	window.fsAttributes.push([
@@ -308,6 +315,11 @@ function combineIndexPosts() {
 		(listInstances) => {
 			// Access the first CMS list instance (if you have only one list)
 			const listInstance = listInstances[0];
+
+			if (!listInstance) {
+				adjustPostsStyles(postsArray);
+				return;
+			}
 
 			listInstance.on("renderitems", (renderedItems) => {
 				// Now that the items are rendered, we can safely adjust the styles
@@ -377,7 +389,7 @@ function newsMasonryGrid() {
 	if (!masonryContainer) return;
 
 	let page = 1;
-
+	window.fsAttributes = window.fsAttributes || [];
 	window.fsAttributes.push([
 		"cmsload",
 		(listInstances) => {
@@ -542,33 +554,41 @@ function indexVideoReveal() {
 	if (videoBlocks.length === 0) return;
 
 	const videoCount = videoBlocks.length;
-	const randomNumber = Math.round(Math.random() * (videoCount - 1));
+	const randomNumber = Math.floor(Math.random() * videoCount); // Change to Math.floor
 	const selectedVideoBlock = videoBlocks[randomNumber];
 	const selectedOverlays = selectedVideoBlock.querySelectorAll(".home-hero_video-overlay");
-	const selectedVideos = selectedVideoBlock.querySelectorAll(".home-hero_video");
+	const selectedVideoWraps = selectedVideoBlock.querySelectorAll(".home-hero_video-wrap");
+	const selectedVideos = selectedVideoBlock.querySelectorAll("video");
+	const selectedThumbnails = selectedVideoBlock.querySelectorAll(".home-hero_video-thumbnail");
+
 	selectedVideoBlock.style.display = "flex";
 
 	let loadedVideos = 0;
-	selectedVideos.forEach((videoWrap) => {
-		const videoEl = videoWrap.querySelector("video");
-		videoEl.addEventListener("canplay", function () {
-			playRevealAnimation();
-		});
+
+	selectedVideos.forEach((videoEl) => {
+		videoEl.addEventListener("play", hideVideoThumbnail);
 	});
 
-	function playRevealAnimation() {
+	function hideVideoThumbnail() {
 		loadedVideos++;
 		if (loadedVideos < 2) return;
 
-		tl.play();
+		gsap.set(selectedThumbnails, {
+			opacity: 0,
+		});
+
+		// Remove the 'canplay' event listener from each video element
+		selectedVideos.forEach((videoEl) => {
+			videoEl.removeEventListener("canplay", hideVideoThumbnail);
+		});
 	}
 
 	const tl = gsap.timeline({
-		paused: true,
 		onComplete: () => {
 			ScrollTrigger.refresh();
 		},
 	});
+
 	tl.to(selectedOverlays, {
 		x: "0%",
 		duration: 1.2,
@@ -584,7 +604,7 @@ function indexVideoReveal() {
 			},
 			"<+0.6"
 		)
-		.set(selectedVideos, {
+		.set(selectedVideoWraps, {
 			opacity: 1,
 		})
 		.to(selectedOverlays, {
@@ -1021,13 +1041,15 @@ function formSuccessState() {
 
 		const btnArrows = formBlock.querySelector('[data-form-success="btn-arrows"]');
 		const successArrows = formBlock.querySelector('[data-form-success="success-icon"]');
-		const submitBtnText = formBlock.querySelector('[data-form-success="submit-text"]');
+		const submitBtnTexts = formBlock.querySelectorAll('[data-form-success="submit-text"]');
 
 		// Define the custom function to run on successful submission
 		function successFunction() {
 			btnArrows.style.display = "none";
 			successArrows.style.display = "flex";
-			submitBtnText.textContent = "Sent";
+			submitBtnTexts.forEach((text) => {
+				text.textContent = "Sent";
+			});
 		}
 
 		// Set up Mutation Observer for success message visibility
@@ -1213,7 +1235,6 @@ function cookiesPopup() {
 document.addEventListener("DOMContentLoaded", () => {
 	gsap.registerPlugin(ScrollTrigger);
 	lenisSmoothScroll();
-	refreshScrollTriggers();
 	headerLogoAnimation();
 	headerMenuAnimation();
 	mobileMenuAccordion();
@@ -1237,4 +1258,5 @@ document.addEventListener("DOMContentLoaded", () => {
 	cmsPagination();
 	setCaseUrl();
 	cookiesPopup();
+	refreshScrollTriggers();
 });
