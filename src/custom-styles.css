@@ -25,17 +25,17 @@
 	opacity: 0;
 }
 
-.home-spotlights_collection::-webkit-scrollbar,
+.home-spotlights_sticky-container::-webkit-scrollbar,
 .post-filters::-webkit-scrollbar {
 	display: none; /* Hide scrollbar */
 }
 
-.home-spotlights_collection,
+.home-spotlights_sticky-container,
 .post-filters {
 	scrollbar-width: none;
 }
 
-.home-spotlights_collection,
+.home-spotlights_sticky-container,
 .post-filters {
 	-ms-overflow-style: none;
 }

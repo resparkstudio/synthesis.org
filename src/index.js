@@ -84,13 +84,13 @@ function refreshScrollTriggers() {
 					if (!sidebarLenis) {
 						lenisSidebarScroll();
 					}
-				}, 400);
+				}, 500);
 			});
 		},
 	]);
 }
 
-function headerAnimation() {
+function headerLogoAnimation() {
 	const header = document.querySelector(".header");
 	if (!header) return;
 
@@ -520,26 +520,6 @@ function newsPostUrl(newsPosts = null) {
 	});
 }
 
-function sectionPinAnimation() {
-	const pinSections = document.querySelectorAll('[data-pin-section="true"]');
-	if (!pinSections.length) return;
-
-	pinSections.forEach((pinSection) => {
-		const nextSection = pinSection.nextSibling;
-		const viewportHeight = window.innerHeight;
-		const pinHeight = pinSection.offsetHeight;
-
-		let st = ScrollTrigger.create({
-			trigger: pinSection,
-			pin: pinSection,
-			start: viewportHeight < pinHeight ? "bottom bottom" : "top top",
-			endTrigger: nextSection,
-			end: "top top",
-			pinSpacing: false,
-		});
-	});
-}
-
 function indexSpotlightSlider() {
 	const swiperWrap = document.querySelector(".home-spotlights_mobile_spotlight-swiper");
 	if (!swiperWrap) return;
@@ -571,9 +551,9 @@ function indexVideoReveal() {
 	let loadedVideos = 0;
 	selectedVideos.forEach((videoWrap) => {
 		const videoEl = videoWrap.querySelector("video");
-		videoEl.onloadeddata = function () {
+		videoEl.addEventListener("canplay", function () {
 			playRevealAnimation();
-		};
+		});
 	});
 
 	function playRevealAnimation() {
@@ -1234,7 +1214,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	gsap.registerPlugin(ScrollTrigger);
 	lenisSmoothScroll();
 	refreshScrollTriggers();
-	headerAnimation();
+	headerLogoAnimation();
 	headerMenuAnimation();
 	mobileMenuAccordion();
 	careerCounter();
@@ -1243,7 +1223,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	newsMasonryGrid();
 	newsPostLayout();
 	newsPostUrl();
-	sectionPinAnimation();
 	indexSpotlightSlider();
 	indexVideoReveal();
 	textRevealAnimation();
