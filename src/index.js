@@ -1147,6 +1147,16 @@ function cmsPagination() {
 				}, 400);
 			}
 
+			function hidePagination() {
+				const paginationWrap = listInstance.paginationWrapper;
+
+				if (totalPages <= 1) {
+					paginationWrap.classList.add("hide");
+				} else {
+					paginationWrap.classList.remove("hide");
+				}
+			}
+
 			// The `renderitems` event runs whenever the list renders items after switching pages.
 			listInstance.on("renderitems", (renderedItems) => {
 				currentPage = listInstance.currentPage;
@@ -1156,6 +1166,7 @@ function cmsPagination() {
 				// On mobile case studies have filters so page count is dynamic
 				setTotalPages();
 				paginationAnchor();
+				hidePagination();
 			});
 		},
 	]);
