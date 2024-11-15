@@ -96,26 +96,6 @@ function refreshScrollTriggers() {
 	]);
 }
 
-function headerLogoAnimation() {
-	const header = document.querySelector(".header");
-	if (!header) return;
-
-	const logo = header.querySelector('[data-header-scroll="logo"]');
-
-	let hideTl = gsap.timeline({
-		scrollTrigger: {
-			start: "top -32px",
-			toggleActions: "play none none reverse",
-		},
-	});
-
-	hideTl.to(logo, {
-		y: "-130%",
-		duration: 0.5,
-		ease: "power2.inOut",
-	});
-}
-
 function headerMenuAnimation() {
 	const menu = document.querySelector('[data-menu="menu"]');
 	if (!menu) return;
@@ -1246,7 +1226,6 @@ function cookiesPopup() {
 document.addEventListener("DOMContentLoaded", () => {
 	gsap.registerPlugin(ScrollTrigger);
 	lenisSmoothScroll();
-	headerLogoAnimation();
 	headerMenuAnimation();
 	mobileMenuAccordion();
 	careerCounter();
