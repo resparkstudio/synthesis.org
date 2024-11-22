@@ -801,3 +801,29 @@ html.lenis body {
 		padding-top: 8.5rem;
 	}
 }
+
+/* SAUNA INNER CASE */
+
+.main-wrapper.is-sauna .section_case-about .case-about_gallery {
+	padding-bottom: 0;
+}
+
+.main-wrapper.is-sauna .case-one_gallery.w-dyn-list {
+	padding-bottom: 4.5rem;
+}
+
+.main-wrapper.is-sauna .case-two_gallery-wrap {
+	display: none;
+}
+
+@media only screen and (max-width: 991px) {
+	.case-two_wrap.grid {
+		padding-bottom: 6.5rem;
+	}
+}
+
+@media only screen and (max-width: 767px) {
+	.case-two_wrap.grid {
+		padding-bottom: 4rem;
+	}
+}

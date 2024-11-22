@@ -1223,6 +1223,19 @@ function cookiesPopup() {
 	observer.observe(document.body, { childList: true, subtree: true });
 }
 
+function customSaunaCaseStudy() {
+	const saunaTrigger = document.querySelector(".sauna-case-inner-condition");
+	if (!saunaTrigger) return;
+
+	const mainWrapper = document.querySelector(".main-wrapper");
+
+	const saunaValue = saunaTrigger.textContent;
+
+	if (saunaValue === "true") {
+		mainWrapper.classList.add("is-sauna");
+	}
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 	gsap.registerPlugin(ScrollTrigger);
 	lenisSmoothScroll();
@@ -1249,4 +1262,5 @@ document.addEventListener("DOMContentLoaded", () => {
 	setCaseUrl();
 	cookiesPopup();
 	refreshScrollTriggers();
+	customSaunaCaseStudy();
 });
