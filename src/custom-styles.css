@@ -25,7 +25,8 @@
 	transform: translateX(-100%);
 }
 
-.home-hero_bottom-content {
+.home-hero_bottom-content,
+.home-hero_top-bottom {
 	opacity: 0;
 }
 
