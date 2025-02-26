@@ -3,6 +3,7 @@ export function customFormValidation() {
 	if (!forms.length) return;
 	$("form").each(function () {
 		$(this).validate({
+			ignore: [],
 			rules: {
 				Name: {
 					required: true,
@@ -21,6 +22,12 @@ export function customFormValidation() {
 				PrivacyPolicy: {
 					required: true,
 				},
+				Company: {
+					required: true,
+				},
+				Guests: {
+					required: true,
+				},
 			},
 			messages: {
 				Name: {
@@ -36,6 +43,12 @@ export function customFormValidation() {
 				},
 				LinkedinOrPortfolio: {
 					url: "Please enter a valid URL",
+				},
+				Company: {
+					required: "Please enter your company",
+				},
+				Guests: {
+					required: "Please select the number of guests",
 				},
 			},
 			focusInvalid: false,
@@ -55,6 +68,12 @@ export function customFormValidation() {
 				// Prevent error message display for the checkbox
 				if (element.attr("type") === "checkbox") {
 					return; // Do nothing for checkboxes, so no error message is shown
+				}
+
+				if (element.is("select")) {
+					// Find the closest .form_dropdown parent and insert the error message after it
+					let dropdownWrapper = element.closest(".form_dropdown");
+					error.insertAfter(dropdownWrapper);
 				} else {
 					error.insertAfter(element); // Place error message for other elements
 				}
@@ -77,6 +96,9 @@ export function formSuccessState() {
 		const successArrows = formBlock.querySelector('[data-form-success="success-icon"]');
 		const submitBtnTexts = formBlock.querySelectorAll('[data-form-success="submit-text"]');
 
+		// Used in KP registration form
+		const customSuccessMessage = formBlock.querySelector('[data-form-success="custom-msg"]');
+
 		// Define the custom function to run on successful submission
 		function successFunction() {
 			btnArrows.style.display = "none";
@@ -84,6 +106,10 @@ export function formSuccessState() {
 			submitBtnTexts.forEach((text) => {
 				text.textContent = "Sent";
 			});
+
+			if (customSuccessMessage) {
+				customSuccessMessage.style.display = "block";
+			}
 		}
 
 		// Set up Mutation Observer for success message visibility
@@ -122,4 +148,41 @@ export function formURLfield() {
 
 	const pageURL = window.location.href;
 	urlField.value = pageURL;
+}
+
+export function formSelectDropdown() {
+	const input = document.querySelector('[data-form-select="input"]');
+	if (!input) return;
+
+	const dropdownToggle = document.querySelector('[data-form-select="dropdown-toggle"]');
+
+	input.addEventListener("change", (e) => {
+		if (e.target.value !== "") {
+			dropdownToggle.classList.add("has-value");
+		}
+	});
+}
+
+export function formCustomLoader() {
+	const loaderForms = document.querySelectorAll('[data-form-loader="form-block"]');
+
+	loaderForms.forEach((formBlock) => {
+		const loader = formBlock.querySelector('[data-form-loader="loader"]');
+		const btnArrows = formBlock.querySelector('[data-form-loader="btn-arrows"]');
+
+		// 1. Catch when the form starts submitting (show loader)
+		$(document).ready(function () {
+			$(".w-form").submit(function (event) {
+				loader.style.display = "block";
+				btnArrows.style.display = "none";
+			});
+		});
+
+		// 2. Catch when form is submitted (hide loader)
+		$(document).ajaxComplete(function (event, xhr, settings) {
+			if (settings.url.includes("https://webflow.com/api/v1/form/")) {
+				loader.style.display = "none";
+			}
+		});
+	});
 }

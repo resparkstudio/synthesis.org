@@ -394,6 +394,22 @@
 }
 
 /* FORM */
+.form_dropdown_link.w--current {
+	background-color: rgba(0, 0, 0, 0.05);
+}
+
+.form_dropdown_link.w--current .form_dropdown_icon.is-link {
+	display: flex;
+}
+
+.form_dropdown_toggle.has-value {
+	color: var(--text--text_dark);
+}
+
+.form_dropdown_list-wrap .form_dropdown_link:first-of-type {
+	display: none !important;
+}
+
 .form_checbox-wrap:hover:not(:has(.form_privacy-link:hover)) .form_checkbox {
 	background-color: #f1f1f1;
 }

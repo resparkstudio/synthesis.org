@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { lenisSmoothScroll } from "./modules/smoothScroll";
 import { combineIndexPosts, newsMasonryGrid, newsPostLayout, newsPostUrl, cmsPagination, setCaseUrl, customSaunaCaseStudy } from "./modules/posts";
 import { indexSpotlightSlider, mobileOnlySwiper, dataProjectsSwiper, testimonialsSwiper, teamMembersSwiper } from "./modules/sliders";
-import { customFormValidation, formSuccessState, formURLfield } from "./modules/forms";
+import { customFormValidation, formSuccessState, formURLfield, formSelectDropdown, formCustomLoader } from "./modules/forms";
 import { headerMenuAnimation, mobileMenuAccordion, indexVideoReveal, textRevealAnimation } from "./modules/animations";
 import { cookiesPopup } from "./modules/cookies";
 import { careerCounter, emptyPositions } from "./modules/career";
@@ -39,4 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	cookiesPopup();
 	refreshScrollTriggers();
 	customSaunaCaseStudy();
+	formSelectDropdown();
+	formCustomLoader();
 });
