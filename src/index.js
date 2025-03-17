@@ -30,7 +30,13 @@ function barbaJS() {
 
 	function transitionIn(data) {
 		return new Promise((resolve) => {
-			const tl = gsap.timeline({ onComplete: () => resolve() });
+			const tl = gsap.timeline({
+				onComplete: () => {
+					// Scroll to top after new page content has entered
+					window.scrollTo(0, 0);
+					resolve();
+				},
+			});
 
 			tl.set(transitionContainer, {
 				autoAlpha: 1,
@@ -179,6 +185,6 @@ function initFunctions() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-	barbaJS();
 	initFunctions();
+	barbaJS();
 });
