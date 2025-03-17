@@ -186,6 +186,7 @@ export function indexVideoReveal() {
 	let loadedVideos = 0;
 
 	selectedVideos.forEach((videoEl) => {
+		videoEl.play();
 		videoEl.addEventListener("play", hideVideoThumbnail);
 	});
 
@@ -212,7 +213,7 @@ export function indexVideoReveal() {
 	tl.to(selectedOverlays, {
 		x: "0%",
 		duration: 1.2,
-		ease: "power4.inOut",
+		ease: "custom",
 		stagger: 0.15,
 	})
 		.to(
@@ -222,7 +223,7 @@ export function indexVideoReveal() {
 				duration: 0.6,
 				ease: "power2.out",
 			},
-			"<+0.6"
+			"<+0.8"
 		)
 		.set(selectedVideoWraps, {
 			opacity: 1,
@@ -230,7 +231,7 @@ export function indexVideoReveal() {
 		.to(selectedOverlays, {
 			x: "100%",
 			duration: 1.2,
-			ease: "power4.inOut",
+			ease: "custom",
 			stagger: 0.15,
 		})
 		.from(
@@ -238,7 +239,7 @@ export function indexVideoReveal() {
 			{
 				scale: 1.4,
 				duration: 2,
-				ease: "power3.out",
+				ease: "custom",
 			},
 			"<+0.3"
 		)
@@ -249,7 +250,7 @@ export function indexVideoReveal() {
 				duration: 0.5,
 				ease: "power2.out",
 			},
-			"-=0.9"
+			"-=1.2"
 		)
 		.to(
 			[".home-hero_bottom-content", ".home-hero_top-bottom"],
@@ -284,7 +285,8 @@ export function textRevealAnimation() {
 			tl.to(textOverlay, {
 				x: "0%",
 				duration: 0.8,
-				ease: "power4.inOut",
+				// ease: "power4.inOut",
+				ease: "custom",
 			})
 				.set(words, {
 					autoAlpha: 1,
@@ -294,7 +296,8 @@ export function textRevealAnimation() {
 					{
 						x: "100%",
 						duration: 0.8,
-						ease: "power4.inOut",
+						// ease: "power4.inOut",
+						ease: "custom",
 					},
 					"+=0.2"
 				)
@@ -309,6 +312,7 @@ export function textRevealAnimation() {
 						x: "0px",
 						duration: 0.8,
 						ease: "power3.out",
+						// ease: "custom",
 						stagger: {
 							each: 0.01,
 						},

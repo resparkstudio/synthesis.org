@@ -1,6 +1,13 @@
+import barba from "@barba/core";
+
 import "./custom-styles.css"; // Custom CSS import
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { CustomEase } from "gsap/CustomEase";
+
+gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(CustomEase);
+CustomEase.create("custom", `M0,0 C0.5,0 0,1 1,1`);
 
 // Importing all modules
 import { lenisSmoothScroll } from "./modules/smoothScroll";
@@ -10,10 +17,138 @@ import { customFormValidation, formSuccessState, formURLfield, formSelectDropdow
 import { headerMenuAnimation, mobileMenuAccordion, indexVideoReveal, textRevealAnimation } from "./modules/animations";
 import { cookiesPopup } from "./modules/cookies";
 import { careerCounter, emptyPositions } from "./modules/career";
-import { refreshScrollTriggers, currentYear } from "./modules/utils";
+import { refreshScrollTriggers, currentYear, initFinsweetAttributes } from "./modules/utils";
 
-document.addEventListener("DOMContentLoaded", () => {
-	gsap.registerPlugin(ScrollTrigger);
+// Initializing barba page transitions
+function barbaJS() {
+	const transitionContainer = document.querySelector('[data-transition-animation="container"]');
+	if (!transitionContainer) return;
+
+	const transitionOverlay = transitionContainer.querySelector('[data-transition-animation="overlay"]');
+	const transitionWrap = transitionContainer.querySelector('[data-transition-animation="wrap"]');
+	const transitionLines = transitionContainer.querySelectorAll('[data-transition-animation="line"]');
+
+	function transitionIn(data) {
+		return new Promise((resolve) => {
+			const tl = gsap.timeline({ onComplete: () => resolve() });
+
+			tl.set(transitionContainer, {
+				autoAlpha: 1,
+			})
+				.to(transitionOverlay, {
+					opacity: 0.4,
+					duration: 0.4,
+					ease: "linear",
+				})
+				.to(
+					transitionWrap,
+					{
+						y: 0,
+						duration: 1.5,
+						ease: "custom",
+					},
+					"<"
+				)
+				.to(
+					data.current.container,
+					{
+						y: -150,
+						duration: 1.5,
+						ease: "custom",
+					},
+					"<"
+				)
+				.to(
+					transitionLines,
+					{
+						x: "0%",
+						duration: 0.7,
+						ease: "custom",
+						stagger: 0.1,
+					},
+					">-0.7"
+				);
+		});
+	}
+
+	function transitionOut(data) {
+		const tl = gsap.timeline({
+			onComplete: () => {
+				// Reset styles for next transition after current animation completes
+				gsap.set(transitionWrap, { y: "100%" });
+				gsap.set(transitionOverlay, { opacity: 0 });
+				gsap.set(transitionContainer, { autoAlpha: 0 });
+				gsap.set(transitionLines, { x: "-100%" });
+			},
+		});
+
+		tl.to(transitionLines, {
+			x: "100%",
+			duration: 0.7,
+			ease: "power3.inOut",
+			stagger: 0.1,
+		})
+			.to(
+				transitionOverlay,
+				{
+					opacity: 0,
+					duration: 1,
+					ease: "linear",
+				},
+				">-0.5"
+			)
+			.to(
+				transitionWrap,
+				{
+					y: "-100%",
+					duration: 1.5,
+					ease: "custom",
+				},
+				"<"
+			)
+			.from(
+				data.next.container,
+				{
+					y: 100,
+					duration: 1.5,
+					ease: "custom",
+				},
+				"<"
+			)
+			.set(transitionContainer, {
+				autoAlpha: 0,
+			});
+	}
+
+	barba.init({
+		transitions: [
+			{
+				name: "overlay-transition",
+
+				// Start the overlay animation
+				async leave(data) {
+					await transitionIn(data);
+				},
+
+				// Clean up ScrollTrigger after leave animation completes
+				async afterLeave(data) {
+					ScrollTrigger.getAll().forEach((st) => st.kill());
+				},
+
+				// Initialize new page after old DOM is removed
+				async after(data) {
+					initFunctions();
+
+					// Animate out the overlay
+					transitionOut(data);
+				},
+			},
+		],
+	});
+}
+
+function initFunctions() {
+	initFinsweetAttributes();
 	lenisSmoothScroll();
 	headerMenuAnimation();
 	mobileMenuAccordion();
@@ -41,4 +176,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	customSaunaCaseStudy();
 	formSelectDropdown();
 	formCustomLoader();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+	barbaJS();
+	initFunctions();
 });

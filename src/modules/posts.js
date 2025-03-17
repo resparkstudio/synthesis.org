@@ -1,3 +1,4 @@
+import barba from "@barba/core";
 import MagicGrid from "magic-grid";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -6,7 +7,6 @@ export function combineIndexPosts() {
 
 	if (!postsArray.length) return;
 	window.fsAttributes = window.fsAttributes || [];
-
 	// CMS Combine functionality
 	window.fsAttributes.push([
 		"cmscombine",
@@ -87,14 +87,13 @@ export function newsMasonryGrid() {
 	if (!masonryContainer) return;
 
 	let page = 1;
-	window.fsAttributes = window.fsAttributes || [];
-	window.fsAttributes.push([
-		"cmsload",
-		(listInstances) => {
-			// The callback passes a `listInstances` array with all the `CMSList` instances on the page.
+	document.addEventListener(
+		"fs-cmsload-ready",
+		(event) => {
+			const listInstances = event.detail.instances;
+
 			const [listInstance] = listInstances;
 
-			// The `renderitems` event runs whenever the list renders items after switching pages.
 			listInstance.on("renderitems", (renderedItems) => {
 				magicGrid.positionItems();
 
@@ -107,7 +106,8 @@ export function newsMasonryGrid() {
 				page += 1;
 			});
 		},
-	]);
+		{ once: true }
+	);
 
 	// Initiating instance of Magic Grid
 	let magicGrid = new MagicGrid({
@@ -234,11 +234,10 @@ export function cmsPagination() {
 	const paginationList = document.querySelector('[data-custom-pagination="collection"]');
 	if (!paginationList) return;
 
-	window.fsAttributes = window.fsAttributes || [];
-	window.fsAttributes.push([
-		"cmsload",
-		(listInstances) => {
-			// The callback passes a `listInstances` array with all the `CMSList` instances on the page.
+	document.addEventListener(
+		"fs-cmsload-ready",
+		(event) => {
+			const listInstances = event.detail.instances;
 			const [listInstance] = listInstances;
 
 			let totalPages = listInstance.totalPages;
@@ -309,7 +308,8 @@ export function cmsPagination() {
 				hidePagination();
 			});
 		},
-	]);
+		{ once: true }
+	);
 }
 
 export function setCaseUrl() {
@@ -330,28 +330,29 @@ export function setCaseUrl() {
 			const postUrl = post.querySelector('[data-case-url="url"]').href;
 			const postWrap = post.querySelector('[data-case-url="wrap"]');
 			postWrap.addEventListener("click", () => {
-				window.location.href = postUrl;
+				barba.go(postUrl);
 			});
 		});
 	}
 
 	function setPaginatedUrl() {
-		window.fsAttributes = window.fsAttributes || [];
-		window.fsAttributes.push([
-			"cmsload",
-			(listInstances) => {
-				// The callback passes a `listInstances` array with all the `CMSList` instances on the page.
+		document.addEventListener(
+			"fs-cmsload-ready",
+			(event) => {
+				const listInstances = event.detail.instances;
 				const [listInstance] = listInstances;
+
 				const allPosts = listInstance.items;
 
 				allPosts.forEach((post) => {
 					const postUrl = post.href;
 					post.element.addEventListener("click", () => {
-						window.location.href = postUrl;
+						barba.go(postUrl);
 					});
 				});
 			},
-		]);
+			{ once: true }
+		);
 	}
 }
 

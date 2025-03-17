@@ -14,6 +14,7 @@
 		"esbuild": "^0.23.1"
 	},
 	"dependencies": {
+		"@barba/core": "^2.10.3",
 		"gsap": "^3.12.5",
 		"lenis": "^1.1.14",
 		"magic-grid": "^3.4.7",
