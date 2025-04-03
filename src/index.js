@@ -17,7 +17,7 @@ import { customFormValidation, formSuccessState, formURLfield, formSelectDropdow
 import { headerMenuAnimation, mobileMenuAccordion, indexVideoReveal, textRevealAnimation } from "./modules/animations";
 import { cookiesPopup } from "./modules/cookies";
 import { careerCounter, emptyPositions } from "./modules/career";
-import { refreshScrollTriggers, currentYear, initFinsweetAttributes } from "./modules/utils";
+import { refreshScrollTriggers, currentYear, initFinsweetAttributes, autoplayVideos } from "./modules/utils";
 
 // Initializing barba page transitions
 function barbaJS() {
@@ -182,6 +182,7 @@ function initFunctions() {
 	customSaunaCaseStudy();
 	formSelectDropdown();
 	formCustomLoader();
+	autoplayVideos();
 }
 
 document.addEventListener("DOMContentLoaded", () => {

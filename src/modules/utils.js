@@ -94,3 +94,20 @@ export async function initFinsweetAttributes() {
 		document.dispatchEvent(cmsfilterEvent);
 	}
 }
+
+export function autoplayVideos() {
+	const videos = document.querySelectorAll("video[autoplay]");
+
+	videos.forEach((video) => {
+		// Check if the src attribute exists and is not empty
+		const hasSrcAttribute = video.hasAttribute("src") && video.getAttribute("src").trim() !== "";
+
+		if (!hasSrcAttribute) {
+			return;
+		}
+
+		video.play().catch((err) => {
+			console.warn("Could not play video:", err);
+		});
+	});
+}
