@@ -10,7 +10,7 @@ gsap.registerPlugin(CustomEase);
 CustomEase.create("custom", `M0,0 C0.5,0 0,1 1,1`);
 
 // Importing all modules
-import { lenisSmoothScroll } from "./modules/smoothScroll";
+import { lenisSmoothScroll, lenisSidebarScroll } from "./modules/smoothScroll";
 import { combineIndexPosts, newsMasonryGrid, newsPostLayout, newsPostUrl, cmsPagination, setCaseUrl, customSaunaCaseStudy } from "./modules/posts";
 import { indexSpotlightSlider, mobileOnlySwiper, dataProjectsSwiper, testimonialsSwiper, teamMembersSwiper } from "./modules/sliders";
 import { customFormValidation, formSuccessState, formURLfield, formSelectDropdown, formCustomLoader } from "./modules/forms";
@@ -156,6 +156,7 @@ function barbaJS() {
 function initFunctions() {
 	initFinsweetAttributes();
 	lenisSmoothScroll();
+	lenisSidebarScroll();
 	headerMenuAnimation();
 	mobileMenuAccordion();
 	careerCounter();
