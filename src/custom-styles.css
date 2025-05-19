@@ -844,3 +844,18 @@ html.lenis body {
 		padding-bottom: 4rem;
 	}
 }
+
+/* Brandtypes active tab icon */
+.brandtype-tabs_link.w--current .brandtype-tabs_link-icon {
+	display: flex;
+}
+
+/* Brandtypes tabs overflow hide scrollbar */
+.brandtype-tabs_menu::-webkit-scrollbar {
+	display: none;
+}
+
+.brandtype-tabs_menu {
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none;
+}
