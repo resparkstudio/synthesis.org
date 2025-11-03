@@ -338,22 +338,9 @@ export function contactModal() {
 
 	let openTl = gsap.timeline({ paused: true });
 	openTl
-		.set(modal, {
-			display: "flex",
-		})
-		.from(overlay, {
-			opacity: 0,
-			duration: 0.4,
-		})
-		.from(
-			content,
-			{
-				xPercent: 100,
-				duration: 0.8,
-				ease: "power2.out",
-			},
-			"<"
-		);
+		.set(modal, { display: "flex" })
+		.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.4 })
+		.fromTo(content, { xPercent: 100 }, { xPercent: 0, duration: 0.8, ease: "power2.out" }, "<");
 
 	let closeTl = gsap.timeline({ paused: true });
 	closeTl
@@ -376,7 +363,6 @@ export function contactModal() {
 
 	function openModal(service) {
 		serviceInputs.forEach((input) => {
-			console.log(input.value);
 			if (input.value === service) {
 				input.checked = true;
 			}
@@ -391,7 +377,6 @@ export function contactModal() {
 	triggers.forEach((trigger) => {
 		const service = trigger.dataset.contactService;
 		trigger.addEventListener("click", (e) => {
-			e.preventDefault();
 			openModal(service);
 		});
 	});

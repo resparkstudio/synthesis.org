@@ -35,6 +35,9 @@ function barbaJS() {
 					// Scroll to top after new page content has entered
 					window.scrollTo(0, 0);
 					resolve();
+					// Clears inline transform after animation completes
+					gsap.set(data.next.container, { clearProps: "all" });
+					console.log(data.next.container);
 				},
 			});
 
