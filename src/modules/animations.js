@@ -322,3 +322,85 @@ export function textRevealAnimation() {
 		});
 	});
 }
+
+export function contactModal() {
+	const modal = document.querySelector('[data-contact-modal="modal"]');
+
+	if (!modal) return;
+
+	const closeBtn = modal.querySelector('[data-contact-modal="close-btn"]');
+	const content = modal.querySelector('[data-contact-modal="content"]');
+	const overlay = modal.querySelector('[data-contact-modal="overlay"]');
+	const serviceInputs = modal.querySelectorAll('[data-contact-modal="service"]');
+	const triggers = document.querySelectorAll('[data-contact-modal="trigger"]');
+
+	if (!triggers.length) return;
+
+	let openTl = gsap.timeline({ paused: true });
+	openTl
+		.set(modal, {
+			display: "flex",
+		})
+		.from(overlay, {
+			opacity: 0,
+			duration: 0.4,
+		})
+		.from(
+			content,
+			{
+				xPercent: 100,
+				duration: 0.8,
+				ease: "power2.out",
+			},
+			"<"
+		);
+
+	let closeTl = gsap.timeline({ paused: true });
+	closeTl
+		.to(content, {
+			xPercent: 100,
+			duration: 0.4,
+			ease: "power2.in",
+		})
+		.to(
+			overlay,
+			{
+				opacity: 0,
+				duration: 0.2,
+			},
+			"<"
+		)
+		.set(modal, {
+			display: "none",
+		});
+
+	function openModal(service) {
+		serviceInputs.forEach((input) => {
+			console.log(input.value);
+			if (input.value === service) {
+				input.checked = true;
+			}
+		});
+		openTl.restart();
+	}
+
+	function closeModal() {
+		closeTl.restart();
+	}
+
+	triggers.forEach((trigger) => {
+		const service = trigger.dataset.contactService;
+		trigger.addEventListener("click", (e) => {
+			e.preventDefault();
+			openModal(service);
+		});
+	});
+
+	closeBtn.addEventListener("click", () => {
+		closeModal();
+	});
+
+	overlay.addEventListener("click", () => {
+		closeModal();
+	});
+}

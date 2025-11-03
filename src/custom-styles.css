@@ -859,3 +859,9 @@ html.lenis body {
 	-ms-overflow-style: none; /* IE and Edge */
 	scrollbar-width: none;
 }
+
+/* Start a project form */
+.project-contact_radio-button:checked ~ .project-contact_radio-label {
+	background-color: var(--background--bg_dark);
+	color: var(--text--text_light);
+}

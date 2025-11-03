@@ -14,7 +14,7 @@ import { lenisSmoothScroll, lenisSidebarScroll } from "./modules/smoothScroll";
 import { combineIndexPosts, newsMasonryGrid, newsPostLayout, newsPostUrl, cmsPagination, setCaseUrl, customSaunaCaseStudy } from "./modules/posts";
 import { indexSpotlightSlider, mobileOnlySwiper, dataProjectsSwiper, testimonialsSwiper, teamMembersSwiper } from "./modules/sliders";
 import { customFormValidation, formSuccessState, formURLfield, formSelectDropdown, formCustomLoader } from "./modules/forms";
-import { headerMenuAnimation, mobileMenuAccordion, indexVideoReveal, textRevealAnimation } from "./modules/animations";
+import { headerMenuAnimation, mobileMenuAccordion, indexVideoReveal, textRevealAnimation, contactModal } from "./modules/animations";
 import { cookiesPopup } from "./modules/cookies";
 import { careerCounter, emptyPositions } from "./modules/career";
 import { refreshScrollTriggers, currentYear, initFinsweetAttributes, autoplayVideos } from "./modules/utils";
@@ -184,6 +184,7 @@ function initFunctions() {
 	formSelectDropdown();
 	formCustomLoader();
 	autoplayVideos();
+	contactModal();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
